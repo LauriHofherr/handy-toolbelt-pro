@@ -101,9 +101,14 @@ export default function EstimateDetail() {
             <Mail className="w-4 h-4 mr-1" /> Email
           </Button>
         </div>
-        <Button variant="secondary" className="w-full tap-target" onClick={handlePdf}>
-          <FileDown className="w-4 h-4 mr-1" /> Download PDF
-        </Button>
+        <div className="grid grid-cols-2 gap-2">
+          <Button variant="secondary" className="tap-target" onClick={handlePdf}>
+            <FileDown className="w-4 h-4 mr-1" /> PDF
+          </Button>
+          <Button variant="secondary" className="tap-target" onClick={handleCopyLink}>
+            <Link2 className="w-4 h-4 mr-1" /> Copy Link
+          </Button>
+        </div>
         {estimate.status === 'accepted' && (
           <Button className="w-full tap-target text-base font-semibold" onClick={handleConvert}>
             Convert to Job

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Plus, Clock, Receipt, Briefcase, DollarSign, AlertTriangle, ArrowRight } from 'lucide-react';
+import { Plus, Clock, Receipt, Briefcase, DollarSign, AlertTriangle, ArrowRight, Settings } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { formatCurrency, formatRelativeTime, calculateSubtotal } from '@/lib/utils';
 import { PageHeader } from '@/components/PageHeader';

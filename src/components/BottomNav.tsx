@@ -1,13 +1,12 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Briefcase, Users, FileText, BarChart3 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Home, Briefcase, Users, FileText, Settings } from 'lucide-react';
 
 const navItems = [
   { path: '/', icon: Home, label: 'Home' },
   { path: '/jobs', icon: Briefcase, label: 'Jobs' },
   { path: '/clients', icon: Users, label: 'Clients' },
   { path: '/invoices', icon: FileText, label: 'Invoices' },
-  { path: '/reports', icon: BarChart3, label: 'Reports' },
+  { path: '/settings', icon: Settings, label: 'Settings' },
 ];
 
 export function BottomNav() {

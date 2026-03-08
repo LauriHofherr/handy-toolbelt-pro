@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { Edit, Send, FileDown, MessageSquare, Mail } from 'lucide-react';
+import { Edit, Send, FileDown, MessageSquare, Mail, Link2 } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { PageHeader } from '@/components/PageHeader';
 import { StatusBadge } from '@/components/StatusBadge';

@@ -20,6 +20,7 @@ import InvoiceList from "@/pages/invoices/InvoiceList";
 import InvoiceForm from "@/pages/invoices/InvoiceForm";
 import InvoiceDetail from "@/pages/invoices/InvoiceDetail";
 import Reports from "@/pages/Reports";
+import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();

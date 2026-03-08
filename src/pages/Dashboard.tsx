@@ -37,7 +37,15 @@ export default function Dashboard() {
 
   return (
     <div className="pb-24">
-      <PageHeader title={settings.businessName} subtitle="Dashboard" />
+      <PageHeader
+        title={settings.businessName}
+        subtitle="Dashboard"
+        actions={
+          <Button size="icon" variant="ghost" onClick={() => navigate('/settings')}>
+            <Settings className="w-5 h-5" />
+          </Button>
+        }
+      />
       <div className="px-4 max-w-lg mx-auto space-y-6 pt-4">
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3">

@@ -52,6 +52,7 @@ const App = () => (
             <Route path="/invoices/:id" element={<InvoiceDetail />} />
             <Route path="/invoices/:id/edit" element={<InvoiceForm />} />
             <Route path="/reports" element={<Reports />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <BottomNav />

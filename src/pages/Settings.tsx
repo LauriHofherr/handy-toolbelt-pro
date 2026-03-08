@@ -188,7 +188,7 @@ export default function Settings() {
                   <>
                     <Input value={editName} onChange={e => setEditName(e.target.value)} className="flex-1 h-8 text-sm mr-2" />
                     <Input type="number" value={editPrice} onChange={e => setEditPrice(e.target.value)} className="w-20 h-8 text-sm mr-2" />
-                    <button onClick={saveEdit} className="p-1"><Check className="w-4 h-4 text-green-500" /></button>
+                    <button onClick={saveEdit} className="p-1"><Check className="w-4 h-4 text-success" /></button>
                     <button onClick={() => setEditingId(null)} className="p-1"><X className="w-4 h-4 text-muted-foreground" /></button>
                   </>
                 ) : (

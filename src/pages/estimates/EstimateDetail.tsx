@@ -1,9 +1,9 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { Edit, Send, FileDown, MessageSquare, Mail, Link2 } from 'lucide-react';
+import { Edit, FileDown, MessageSquare, Mail, Link2 } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { PageHeader } from '@/components/PageHeader';
 import { StatusBadge } from '@/components/StatusBadge';
-import { formatCurrency, formatDate, calculateSubtotal, calculateTotal } from '@/lib/utils';
+import { formatCurrency, formatDate } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { generateEstimatePdf } from '@/lib/pdf';
@@ -17,15 +17,29 @@ export default function EstimateDetail() {
 
   if (!estimate) return <div className="p-8 text-center text-muted-foreground">Estimate not found</div>;
 
-  const subtotal = calculateSubtotal(estimate.lineItems);
-  const total = calculateTotal(estimate.lineItems, estimate.taxRate);
+  const hasNewFormat = (estimate.laborItems?.length || 0) > 0 || (estimate.materialItems?.length || 0) > 0;
+
+  const laborSubtotal = (estimate.laborItems || []).reduce((s, i) => s + i.hours * i.rate, 0);
+  const materialsRaw = (estimate.materialItems || []).reduce((s, i) => s + i.quantity * i.unitCost, 0);
+  const markup = estimate.materialMarkup || 0;
+  const materialsWithMarkup = materialsRaw * (1 + markup / 100);
+  const subtotal = laborSubtotal + materialsWithMarkup;
+  const contingencyAmt = estimate.contingencyEnabled ? subtotal * ((estimate.contingencyRate || 0) / 100) : 0;
+  const preTax = subtotal + contingencyAmt;
+  const taxAmt = preTax * (estimate.taxRate / 100);
+  const grandTotal = preTax + taxAmt;
 
   const handleSend = (method: 'sms' | 'email') => {
-    const body = `Hi ${client?.name}, here's your estimate for ${formatCurrency(total)} from ${settings.businessName}. Please review and let me know!`;
+    const total = hasNewFormat ? grandTotal : 0;
+    const jobDesc = estimate.scopeOfWork || 'your project';
+
     if (method === 'sms' && client?.phone) {
+      const body = `Hi ${client.name}, here's my estimate for ${jobDesc}. Total: ${formatCurrency(total)}. Reply to accept or call me with questions.`;
       window.open(`sms:${client.phone}?body=${encodeURIComponent(body)}`);
     } else if (method === 'email' && client?.email) {
-      window.open(`mailto:${client.email}?subject=${encodeURIComponent(`Estimate from ${settings.businessName}`)}&body=${encodeURIComponent(body)}`);
+      const subject = `Estimate for ${jobDesc} – ${settings.businessName}`;
+      const body = `Hi ${client.name},\n\nPlease find the attached estimate for ${jobDesc}.\n\nTotal: ${formatCurrency(total)}\n\nPlease review and let me know if you have any questions.\n\nBest regards,\n${settings.businessName}`;
+      window.open(`mailto:${client.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
     } else {
       toast.error(`No ${method === 'sms' ? 'phone' : 'email'} on file`);
       return;
@@ -67,23 +81,78 @@ export default function EstimateDetail() {
           <span className="text-xs text-muted-foreground">{formatDate(estimate.createdAt)}</span>
         </div>
 
-        {/* Line Items */}
-        <div className="bg-card rounded-xl border border-border divide-y divide-border">
-          {estimate.lineItems.map(item => (
-            <div key={item.id} className="p-3 flex justify-between">
-              <div>
-                <p className="text-sm font-medium">{item.description}</p>
-                <p className="text-xs text-muted-foreground">{item.quantity} × {formatCurrency(item.unitPrice)}</p>
-              </div>
-              <p className="text-sm font-semibold">{formatCurrency(item.quantity * item.unitPrice)}</p>
-            </div>
-          ))}
-          <div className="p-3 space-y-1">
-            <div className="flex justify-between text-sm"><span>Subtotal</span><span>{formatCurrency(subtotal)}</span></div>
-            <div className="flex justify-between text-sm"><span>Tax ({estimate.taxRate}%)</span><span>{formatCurrency(subtotal * estimate.taxRate / 100)}</span></div>
-            <div className="flex justify-between text-lg font-display font-bold pt-1 border-t border-border"><span>Total</span><span className="text-primary">{formatCurrency(total)}</span></div>
+        {estimate.scopeOfWork && (
+          <div className="bg-card rounded-xl border border-border p-3">
+            <p className="text-xs text-muted-foreground mb-1">Scope of Work</p>
+            <p className="text-sm whitespace-pre-wrap">{estimate.scopeOfWork}</p>
           </div>
-        </div>
+        )}
+
+        {hasNewFormat ? (
+          <>
+            {/* Labor items */}
+            {(estimate.laborItems?.length || 0) > 0 && (
+              <div className="bg-card rounded-xl border border-border divide-y divide-border">
+                <div className="p-3">
+                  <p className="text-xs font-display font-bold text-primary">Labor</p>
+                </div>
+                {estimate.laborItems!.map(item => (
+                  <div key={item.id} className="p-3 flex justify-between">
+                    <div>
+                      <p className="text-sm font-medium">{item.description}</p>
+                      <p className="text-xs text-muted-foreground">{item.hours}h × {formatCurrency(item.rate)}/hr</p>
+                    </div>
+                    <p className="text-sm font-semibold">{formatCurrency(item.hours * item.rate)}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Material items */}
+            {(estimate.materialItems?.length || 0) > 0 && (
+              <div className="bg-card rounded-xl border border-border divide-y divide-border">
+                <div className="p-3">
+                  <p className="text-xs font-display font-bold text-primary">Materials & Supplies</p>
+                </div>
+                {estimate.materialItems!.map(item => (
+                  <div key={item.id} className="p-3 flex justify-between">
+                    <div>
+                      <p className="text-sm font-medium">{item.name}</p>
+                      <p className="text-xs text-muted-foreground">{item.quantity} × {formatCurrency(item.unitCost)}</p>
+                    </div>
+                    <p className="text-sm font-semibold">{formatCurrency(item.quantity * item.unitCost)}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Summary */}
+            <div className="bg-card rounded-xl border border-border p-3 space-y-1">
+              <div className="flex justify-between text-sm"><span>Labor</span><span>{formatCurrency(laborSubtotal)}</span></div>
+              <div className="flex justify-between text-sm"><span>Materials</span><span>{formatCurrency(materialsRaw)}</span></div>
+              {markup > 0 && <div className="flex justify-between text-xs text-muted-foreground"><span>Markup ({markup}%)</span><span>+{formatCurrency(materialsRaw * markup / 100)}</span></div>}
+              {estimate.contingencyEnabled && <div className="flex justify-between text-xs text-muted-foreground"><span>Contingency ({estimate.contingencyRate}%)</span><span>+{formatCurrency(contingencyAmt)}</span></div>}
+              <div className="flex justify-between text-sm"><span>Tax ({estimate.taxRate}%)</span><span>{formatCurrency(taxAmt)}</span></div>
+              <div className="flex justify-between text-lg font-display font-bold pt-1 border-t border-border"><span>Total</span><span className="text-primary">{formatCurrency(grandTotal)}</span></div>
+            </div>
+          </>
+        ) : (
+          /* Legacy line items */
+          <div className="bg-card rounded-xl border border-border divide-y divide-border">
+            {estimate.lineItems.map(item => (
+              <div key={item.id} className="p-3 flex justify-between">
+                <div>
+                  <p className="text-sm font-medium">{item.description}</p>
+                  <p className="text-xs text-muted-foreground">{item.quantity} × {formatCurrency(item.unitPrice)}</p>
+                </div>
+                <p className="text-sm font-semibold">{formatCurrency(item.quantity * item.unitPrice)}</p>
+              </div>
+            ))}
+            <div className="p-3 space-y-1">
+              <div className="flex justify-between text-lg font-display font-bold pt-1 border-t border-border"><span>Total</span><span className="text-primary">{formatCurrency(grandTotal)}</span></div>
+            </div>
+          </div>
+        )}
 
         {estimate.notes && (
           <div className="bg-card rounded-xl border border-border p-3">

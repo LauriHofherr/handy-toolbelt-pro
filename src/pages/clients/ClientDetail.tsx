@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { Phone, Mail, MapPin, Edit, Briefcase, FileText, DollarSign } from 'lucide-react';
+import { Phone, Mail, MapPin, Edit, Briefcase, FileText, DollarSign, Plus } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { PageHeader } from '@/components/PageHeader';
 import { StatusBadge } from '@/components/StatusBadge';

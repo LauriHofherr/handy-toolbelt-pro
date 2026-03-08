@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type {
   Client, Estimate, Job, Invoice, Payment,
-  TimeEntry, Expense, ActivityItem, AppSettings,
+  TimeEntry, Expense, ActivityItem, AppSettings, MaterialLibraryEntry,
 } from '@/types';
 
 interface AppState {
@@ -16,6 +16,7 @@ interface AppState {
   activities: ActivityItem[];
   settings: AppSettings;
   activeTimer: { jobId: string; startedAt: string } | null;
+  materialsLibrary: MaterialLibraryEntry[];
 
   // Clients
   addClient: (client: Client) => void;
@@ -57,6 +58,12 @@ interface AppState {
 
   // Settings
   updateSettings: (settings: Partial<AppSettings>) => void;
+
+  // Materials Library
+  addMaterial: (material: MaterialLibraryEntry) => void;
+  updateMaterial: (material: MaterialLibraryEntry) => void;
+  deleteMaterial: (id: string) => void;
+  upsertMaterialByName: (name: string, price: number) => void;
 }
 
 const generateId = () => crypto.randomUUID();
@@ -73,9 +80,14 @@ export const useStore = create<AppState>()(
       expenses: [],
       activities: [],
       activeTimer: null,
+      materialsLibrary: [],
       settings: {
         defaultTaxRate: 8.5,
         defaultHourlyRate: 75,
+        defaultMaterialMarkup: 15,
+        defaultContingencyRate: 10,
+        defaultPaymentTerms: 'Payment due within 30 days of invoice date.',
+        estimateValidityDays: 30,
         businessName: 'HandyMan Pro',
         businessPhone: '',
         businessEmail: '',
@@ -93,6 +105,12 @@ export const useStore = create<AppState>()(
         set((s) => ({ estimates: [...s.estimates, estimate] }));
         const client = get().clients.find(c => c.id === estimate.clientId);
         get().addActivity({ id: generateId(), type: 'estimate', description: `Created estimate for ${client?.name || 'client'}`, timestamp: new Date().toISOString(), relatedId: estimate.id });
+        // Auto-save materials to library
+        if (estimate.materialItems) {
+          estimate.materialItems.forEach(m => {
+            if (m.name.trim()) get().upsertMaterialByName(m.name.trim(), m.unitCost);
+          });
+        }
       },
       updateEstimate: (estimate) => set((s) => ({ estimates: s.estimates.map((e) => e.id === estimate.id ? estimate : e) })),
       deleteEstimate: (id) => set((s) => ({ estimates: s.estimates.filter((e) => e.id !== id) })),
@@ -155,6 +173,19 @@ export const useStore = create<AppState>()(
       addActivity: (activity) => set((s) => ({ activities: [activity, ...s.activities].slice(0, 100) })),
 
       updateSettings: (partial) => set((s) => ({ settings: { ...s.settings, ...partial } })),
+
+      // Materials Library
+      addMaterial: (material) => set((s) => ({ materialsLibrary: [...s.materialsLibrary, material] })),
+      updateMaterial: (material) => set((s) => ({ materialsLibrary: s.materialsLibrary.map(m => m.id === material.id ? material : m) })),
+      deleteMaterial: (id) => set((s) => ({ materialsLibrary: s.materialsLibrary.filter(m => m.id !== id) })),
+      upsertMaterialByName: (name, price) => {
+        const existing = get().materialsLibrary.find(m => m.name.toLowerCase() === name.toLowerCase());
+        if (existing) {
+          get().updateMaterial({ ...existing, lastUsedPrice: price, updatedAt: new Date().toISOString() });
+        } else {
+          get().addMaterial({ id: generateId(), name, lastUsedPrice: price, updatedAt: new Date().toISOString() });
+        }
+      },
     }),
     {
       name: 'handyman-pro-storage',

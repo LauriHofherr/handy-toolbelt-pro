@@ -97,6 +97,11 @@ export default function JobForm() {
         <Button onClick={handleSave} className="w-full tap-target text-base font-semibold">
           {existing ? 'Save Changes' : 'Create Job'}
         </Button>
+        {!existing && clientId && (
+          <Button variant="secondary" className="w-full tap-target" onClick={() => navigate(`/estimates/new?clientId=${clientId}`)}>
+            Create Estimate First
+          </Button>
+        )}
       </div>
     </div>
   );

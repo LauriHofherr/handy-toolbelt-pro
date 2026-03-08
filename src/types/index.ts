@@ -14,13 +14,40 @@ export interface LineItem {
   unitPrice: number;
 }
 
+export interface LaborItem {
+  id: string;
+  description: string;
+  hours: number;
+  rate: number;
+}
+
+export interface MaterialItem {
+  id: string;
+  name: string;
+  quantity: number;
+  unitCost: number;
+}
+
+export interface MaterialLibraryEntry {
+  id: string;
+  name: string;
+  lastUsedPrice: number;
+  updatedAt: string;
+}
+
 export type EstimateStatus = 'draft' | 'sent' | 'accepted' | 'declined';
 
 export interface Estimate {
   id: string;
   clientId: string;
   lineItems: LineItem[];
+  laborItems?: LaborItem[];
+  materialItems?: MaterialItem[];
+  scopeOfWork?: string;
   taxRate: number;
+  materialMarkup?: number;
+  contingencyEnabled?: boolean;
+  contingencyRate?: number;
   notes: string;
   terms: string;
   status: EstimateStatus;
@@ -71,8 +98,8 @@ export interface Invoice {
   jobId: string;
   clientId: string;
   lineItems: LineItem[];
-  timeEntries: string[]; // TimeEntry IDs
-  expenses: string[]; // Expense IDs
+  timeEntries: string[];
+  expenses: string[];
   hourlyRate: number;
   taxRate: number;
   notes: string;
@@ -104,6 +131,10 @@ export interface ActivityItem {
 export interface AppSettings {
   defaultTaxRate: number;
   defaultHourlyRate: number;
+  defaultMaterialMarkup: number;
+  defaultContingencyRate: number;
+  defaultPaymentTerms: string;
+  estimateValidityDays: number;
   businessName: string;
   businessPhone: string;
   businessEmail: string;

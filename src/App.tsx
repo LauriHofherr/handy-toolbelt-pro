@@ -20,6 +20,7 @@ import InvoiceList from "@/pages/invoices/InvoiceList";
 import InvoiceForm from "@/pages/invoices/InvoiceForm";
 import InvoiceDetail from "@/pages/invoices/InvoiceDetail";
 import Reports from "@/pages/Reports";
+import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ const App = () => (
             <Route path="/invoices/:id" element={<InvoiceDetail />} />
             <Route path="/invoices/:id/edit" element={<InvoiceForm />} />
             <Route path="/reports" element={<Reports />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <BottomNav />

@@ -43,6 +43,12 @@ export default function EstimateDetail() {
     navigate(`/jobs/new?estimateId=${estimate.id}&clientId=${estimate.clientId}`);
   };
 
+  const handleCopyLink = () => {
+    const url = `${window.location.origin}/estimates/${estimate.id}/approve`;
+    navigator.clipboard.writeText(url);
+    toast.success('Approval link copied to clipboard');
+  };
+
   return (
     <div className="pb-24">
       <PageHeader

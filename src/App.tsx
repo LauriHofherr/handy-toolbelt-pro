@@ -12,6 +12,7 @@ import ClientDetail from "@/pages/clients/ClientDetail";
 import EstimateList from "@/pages/estimates/EstimateList";
 import EstimateForm from "@/pages/estimates/EstimateForm";
 import EstimateDetail from "@/pages/estimates/EstimateDetail";
+import EstimateApproval from "@/pages/estimates/EstimateApproval";
 import JobList from "@/pages/jobs/JobList";
 import JobForm from "@/pages/jobs/JobForm";
 import JobDetail from "@/pages/jobs/JobDetail";
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/estimates/new" element={<EstimateForm />} />
             <Route path="/estimates/:id" element={<EstimateDetail />} />
             <Route path="/estimates/:id/edit" element={<EstimateForm />} />
+            <Route path="/estimates/:id/approve" element={<EstimateApproval />} />
             <Route path="/jobs" element={<JobList />} />
             <Route path="/jobs/new" element={<JobForm />} />
             <Route path="/jobs/:id" element={<JobDetail />} />

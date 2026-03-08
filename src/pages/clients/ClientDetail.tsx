@@ -65,8 +65,14 @@ export default function ClientDetail() {
 
         {/* Jobs */}
         <div className="space-y-2">
-          <h2 className="text-sm font-display font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-            <Briefcase className="w-4 h-4" /> Jobs ({clientJobs.length})
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-display font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+              <Briefcase className="w-4 h-4" /> Jobs ({clientJobs.length})
+            </h2>
+            <Button size="sm" variant="outline" onClick={() => navigate(`/jobs/new?clientId=${id}`)}>
+              <Plus className="w-4 h-4 mr-1" /> New Job
+            </Button>
+          </div>
           </h2>
           {clientJobs.map(job => (
             <button key={job.id} onClick={() => navigate(`/jobs/${job.id}`)} className="w-full bg-card rounded-lg p-3 border border-border flex items-center justify-between tap-target">

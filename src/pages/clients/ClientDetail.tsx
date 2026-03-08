@@ -73,7 +73,6 @@ export default function ClientDetail() {
               <Plus className="w-4 h-4 mr-1" /> New Job
             </Button>
           </div>
-          </h2>
           {clientJobs.map(job => (
             <button key={job.id} onClick={() => navigate(`/jobs/${job.id}`)} className="w-full bg-card rounded-lg p-3 border border-border flex items-center justify-between tap-target">
               <div className="text-left">

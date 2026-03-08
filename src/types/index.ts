@@ -129,14 +129,42 @@ export interface ActivityItem {
 }
 
 export interface AppSettings {
-  defaultTaxRate: number;
-  defaultHourlyRate: number;
-  defaultMaterialMarkup: number;
-  defaultContingencyRate: number;
-  defaultPaymentTerms: string;
-  estimateValidityDays: number;
+  // Business Profile
   businessName: string;
+  ownerName: string;
   businessPhone: string;
   businessEmail: string;
   businessAddress: string;
+  licenseNumber: string;
+  businessLogo: string; // base64 data URL
+
+  // Financials & Rates
+  defaultHourlyRate: number;
+  overtimeRate: number;
+  defaultMaterialMarkup: number;
+  defaultTaxRate: number;
+  defaultContingencyRate: number;
+  estimateValidityDays: number;
+
+  // Payment Settings
+  paymentMethodOrder: string[]; // ['zelle', 'venmo', 'cash']
+  zelleContact: string;
+  venmoHandle: string;
+  defaultPaymentDueTerms: string; // 'due-on-receipt' | 'net-7' | 'net-15' | 'net-30'
+  paymentInstructions: string;
+
+  // Document Defaults
+  estimateBoilerplate: string;
+  invoiceBoilerplate: string;
+  termsAndConditions: string;
+  showSignatureLine: boolean;
+  fromName: string;
+
+  // Notifications & Reminders
+  reminderSchedule: string[]; // ['3-before', 'on-due', '3-after', '7-after']
+  overdueBadgeThreshold: number;
+  reminderMessageTemplate: string;
+
+  // Legacy compat
+  defaultPaymentTerms: string;
 }

@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Briefcase, Users, FileText, BarChart3 } from 'lucide-react';
+import { Home, Briefcase, Users, FileText, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -7,7 +7,7 @@ const navItems = [
   { path: '/jobs', icon: Briefcase, label: 'Jobs' },
   { path: '/clients', icon: Users, label: 'Clients' },
   { path: '/invoices', icon: FileText, label: 'Invoices' },
-  { path: '/reports', icon: BarChart3, label: 'Reports' },
+  { path: '/settings', icon: Settings, label: 'Settings' },
 ];
 
 export function BottomNav() {

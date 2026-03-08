@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, Briefcase, Users, FileText, Settings } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const navItems = [
   { path: '/', icon: Home, label: 'Home' },

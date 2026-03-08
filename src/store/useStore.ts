@@ -206,6 +206,17 @@ export const useStore = create<AppState>()(
     }),
     {
       name: 'handyman-pro-storage',
+      merge: (persistedState, currentState) => {
+        const persisted = (persistedState || {}) as Partial<AppState>;
+        return {
+          ...currentState,
+          ...persisted,
+          settings: {
+            ...currentState.settings,
+            ...(persisted.settings || {}),
+          },
+        };
+      },
     }
   )
 );

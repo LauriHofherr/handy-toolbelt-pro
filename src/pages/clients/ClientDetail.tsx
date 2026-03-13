@@ -1,16 +1,20 @@
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Phone, Mail, MapPin, Edit, Briefcase, FileText, DollarSign, Plus } from 'lucide-react';
+import { Phone, Mail, MapPin, Edit, Briefcase, FileText, DollarSign, Plus, Trash2 } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { PageHeader } from '@/components/PageHeader';
 import { StatusBadge } from '@/components/StatusBadge';
+import { DeleteClientDialog } from '@/components/DeleteClientDialog';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 export default function ClientDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { clients, jobs, estimates, invoices, payments } = useStore();
+  const { clients, jobs, estimates, invoices, payments, deleteClient } = useStore();
   const client = clients.find(c => c.id === id);
+  const [showDelete, setShowDelete] = useState(false);
 
   if (!client) return <div className="p-8 text-center text-muted-foreground">Client not found</div>;
 
@@ -26,9 +30,14 @@ export default function ClientDetail() {
         title={client.name}
         back
         actions={
-          <Button size="icon" variant="ghost" onClick={() => navigate(`/clients/${id}/edit`)}>
-            <Edit className="w-5 h-5" />
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button size="icon" variant="ghost" onClick={() => setShowDelete(true)}>
+              <Trash2 className="w-5 h-5 text-destructive" />
+            </Button>
+            <Button size="icon" variant="ghost" onClick={() => navigate(`/clients/${id}/edit`)}>
+              <Edit className="w-5 h-5" />
+            </Button>
+          </div>
         }
       />
       <div className="px-4 max-w-lg mx-auto space-y-6 pt-4">
@@ -115,6 +124,18 @@ export default function ClientDetail() {
             </button>
           ))}
         </div>
+
+        <DeleteClientDialog
+          open={showDelete}
+          onOpenChange={setShowDelete}
+          clientName={client.name}
+          hasAssociatedRecords={clientJobs.length > 0 || clientEstimates.length > 0 || clientInvoices.length > 0}
+          onConfirm={() => {
+            deleteClient(client.id);
+            toast.success('Client deleted');
+            navigate('/clients');
+          }}
+        />
       </div>
     </div>
   );

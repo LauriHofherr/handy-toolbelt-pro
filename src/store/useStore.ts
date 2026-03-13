@@ -116,7 +116,16 @@ export const useStore = create<AppState>()(
         get().addActivity({ id: generateId(), type: 'client', description: `Added client: ${client.name}`, timestamp: new Date().toISOString() });
       },
       updateClient: (client) => set((s) => ({ clients: s.clients.map((c) => c.id === client.id ? client : c) })),
-      deleteClient: (id) => set((s) => ({ clients: s.clients.filter((c) => c.id !== id) })),
+  deleteClient: (id) => set((s) => {
+        const clientInvoiceIds = s.invoices.filter(i => i.clientId === id).map(i => i.id);
+        return {
+          clients: s.clients.filter((c) => c.id !== id),
+          estimates: s.estimates.filter((e) => e.clientId !== id),
+          jobs: s.jobs.filter((j) => j.clientId !== id),
+          invoices: s.invoices.filter((i) => i.clientId !== id),
+          payments: s.payments.filter((p) => !clientInvoiceIds.includes(p.invoiceId)),
+        };
+      }),
 
       addEstimate: (estimate) => {
         set((s) => ({ estimates: [...s.estimates, estimate] }));

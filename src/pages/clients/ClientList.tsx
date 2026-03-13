@@ -56,24 +56,43 @@ export default function ClientList() {
         ) : (
           <div className="space-y-2">
             {filtered.map((client) => (
-              <button
+              <div
                 key={client.id}
-                onClick={() => navigate(`/clients/${client.id}`)}
                 className="w-full bg-card rounded-xl p-4 border border-border flex items-center gap-3 tap-target text-left"
               >
-                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                  <span className="text-sm font-bold text-primary">{client.name.charAt(0).toUpperCase()}</span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm truncate">{client.name}</p>
-                  {client.phone && (
-                    <p className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Phone className="w-3 h-3" /> {client.phone}
-                    </p>
-                  )}
-                </div>
+                <button
+                  onClick={() => navigate(`/clients/${client.id}`)}
+                  className="flex items-center gap-3 flex-1 min-w-0"
+                >
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                    <span className="text-sm font-bold text-primary">{client.name.charAt(0).toUpperCase()}</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm truncate">{client.name}</p>
+                    {client.phone && (
+                      <p className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Phone className="w-3 h-3" /> {client.phone}
+                      </p>
+                    )}
+                  </div>
+                </button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="shrink-0 text-muted-foreground hover:text-destructive"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const hasRecords =
+                      estimates.some(est => est.clientId === client.id) ||
+                      jobs.some(j => j.clientId === client.id) ||
+                      invoices.some(inv => inv.clientId === client.id);
+                    setDeleteTarget({ id: client.id, name: client.name, hasRecords });
+                  }}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
                 <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
-              </button>
+              </div>
             ))}
           </div>
         )}

@@ -124,6 +124,18 @@ export default function ClientDetail() {
             </button>
           ))}
         </div>
+
+        <DeleteClientDialog
+          open={showDelete}
+          onOpenChange={setShowDelete}
+          clientName={client.name}
+          hasAssociatedRecords={clientJobs.length > 0 || clientEstimates.length > 0 || clientInvoices.length > 0}
+          onConfirm={() => {
+            deleteClient(client.id);
+            toast.success('Client deleted');
+            navigate('/clients');
+          }}
+        />
       </div>
     </div>
   );

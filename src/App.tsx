@@ -33,6 +33,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <div className="min-h-screen bg-background">
+          <UpdateBanner />
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/clients" element={<ClientList />} />

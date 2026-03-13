@@ -11,8 +11,9 @@ import { toast } from 'sonner';
 
 export default function ClientList() {
   const navigate = useNavigate();
-  const clients = useStore((s) => s.clients);
+  const { clients, estimates, jobs, invoices, deleteClient } = useStore();
   const [search, setSearch] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string; hasRecords: boolean } | null>(null);
 
   const filtered = clients.filter(c =>
     c.name.toLowerCase().includes(search.toLowerCase()) ||

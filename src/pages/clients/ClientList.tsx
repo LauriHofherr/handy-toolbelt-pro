@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Phone, ChevronRight, Users } from 'lucide-react';
+import { Plus, Search, Phone, ChevronRight, Users, Trash2 } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { PageHeader } from '@/components/PageHeader';
 import { EmptyState } from '@/components/EmptyState';
+import { DeleteClientDialog } from '@/components/DeleteClientDialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 export default function ClientList() {
   const navigate = useNavigate();

@@ -1,10 +1,13 @@
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Phone, Mail, MapPin, Edit, Briefcase, FileText, DollarSign, Plus } from 'lucide-react';
+import { Phone, Mail, MapPin, Edit, Briefcase, FileText, DollarSign, Plus, Trash2 } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { PageHeader } from '@/components/PageHeader';
 import { StatusBadge } from '@/components/StatusBadge';
+import { DeleteClientDialog } from '@/components/DeleteClientDialog';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 export default function ClientDetail() {
   const { id } = useParams();

@@ -97,6 +97,20 @@ export default function ClientList() {
           </div>
         )}
       </div>
+
+      <DeleteClientDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}
+        clientName={deleteTarget?.name || ''}
+        hasAssociatedRecords={deleteTarget?.hasRecords || false}
+        onConfirm={() => {
+          if (deleteTarget) {
+            deleteClient(deleteTarget.id);
+            toast.success('Client deleted');
+            setDeleteTarget(null);
+          }
+        }}
+      />
     </div>
   );
 }

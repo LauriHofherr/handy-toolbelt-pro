@@ -12,8 +12,9 @@ import { toast } from 'sonner';
 export default function ClientDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { clients, jobs, estimates, invoices, payments } = useStore();
+  const { clients, jobs, estimates, invoices, payments, deleteClient } = useStore();
   const client = clients.find(c => c.id === id);
+  const [showDelete, setShowDelete] = useState(false);
 
   if (!client) return <div className="p-8 text-center text-muted-foreground">Client not found</div>;
 
